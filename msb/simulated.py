@@ -37,4 +37,4 @@ def mouse_to(destination_x, destination_y, time_between_points=0.0001):
     for point in zip(*(i.astype(int) for i in points)):
         pyautogui.moveTo(*point)
         while time.perf_counter() < time_gate: pass
-        timeGate = time.perf_counter() + time_between_points
+        time_gate = time.perf_counter() + time_between_points

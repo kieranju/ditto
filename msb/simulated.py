@@ -22,10 +22,6 @@ def mouse_to(destination_x, destination_y, time_between_points=0.0001):
     x += xr
     y += yr
 
-    # TODO: Calculate average time to reach destination
-    # TODO: The average time to reach across the screen on a 1080p monitor is 0.2 - 0.4 seconds
-    # destinationDistance = distance.euclidean([origin_x, origin_y], [destination_x, destination_y])
-
     # Approximate using Bezier spline
     degree = 1 if cp > 3 else cp - 1  # Degree of b-spline, 3 is recommended, must be less than number of control points
     tck, u = scipy.interpolate.splprep([x, y], k=degree)
@@ -40,7 +36,7 @@ def mouse_to(destination_x, destination_y, time_between_points=0.0001):
         delay = time.perf_counter() + time_between_points
 
 # TODO: add ability to make mistakes and delete them, then continue
-def type(phrase, words_per_minute=125):
+def type_phrase(phrase, do_make_mistakes=True, words_per_minute=125):
     letter_variance_limit = 0.025  # Typing delay randomness 
     word_delay_upper_limit = 0.4   # Highest delay for the biggest words
     word_delay_slope = 5           # Effectiveness of a single letter on the word delay, less is more
@@ -50,7 +46,8 @@ def type(phrase, words_per_minute=125):
     words = phrase.split()
     word_count = len(words)
     gross_word_count = len(phrase) / gross_word_size
-    time_to_completion = (gross_word_count / words_per_minute) * 60  # seconds
+    time_correction = (word_delay_upper_limit / gross_word_size) * word_count  # accomodate for our induced randomness
+    time_to_completion = ((gross_word_count / words_per_minute) * 60) - time_correction  # seconds
     average_time_per_char = time_to_completion / len(phrase)
     delay = time.perf_counter()
     
@@ -81,3 +78,13 @@ def type(phrase, words_per_minute=125):
         pyautogui.press('space')
         delay = time.perf_counter() + word_delay
         while time.perf_counter() < delay: pass
+
+def key_press(key_name, duration=0.15):
+    duration_variance_limit = 0.050
+    duration_variance = random.uniform(-duration_variance_limit, duration_variance_limit)
+
+    pyautogui.keyDown(key_name)
+    duration = duration + duration_variance
+    delay = time.perf_counter() + duration
+    while time.perf_counter() < delay: pass
+    pyautogui.keyUp(key_name)

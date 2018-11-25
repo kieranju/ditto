@@ -1,10 +1,31 @@
+import ctypes
 import random
 import scipy
 import math
 import time
+
 from scipy import interpolate
 from scipy.spatial import distance
 from definitions import pyautogui
+
+SendInput = ctypes.windll.user32.SendInput
+
+# C struct redefinitions 
+PUL = ctypes.POINTER(ctypes.c_ulong)
+class KeyBdInput(ctypes.Structure):
+    _fields_ = [("wVk", ctypes.c_ushort), ("wScan", ctypes.c_ushort), ("dwFlags", ctypes.c_ulong), ("time", ctypes.c_ulong), ("dwExtraInfo", PUL)]
+
+class HardwareInput(ctypes.Structure):
+    _fields_ = [("uMsg", ctypes.c_ulong), ("wParamL", ctypes.c_short), ("wParamH", ctypes.c_ushort)]
+
+class MouseInput(ctypes.Structure):
+    _fields_ = [("dx", ctypes.c_long), ("dy", ctypes.c_long), ("mouseData", ctypes.c_ulong), ("dwFlags", ctypes.c_ulong), ("time",ctypes.c_ulong), ("dwExtraInfo", PUL)]
+
+class Input_I(ctypes.Union):
+    _fields_ = [("ki", KeyBdInput), ("mi", MouseInput), ("hi", HardwareInput)]
+
+class Input(ctypes.Structure):
+    _fields_ = [("type", ctypes.c_ulong), ("ii", Input_I)]
 
 def mouse_to(destination_x, destination_y, time_between_points=0.0001):
     cp = random.randint(3, 5)  # Number of control points, must be at least 2
@@ -79,12 +100,36 @@ def type_phrase(phrase, do_make_mistakes=True, words_per_minute=125):
         delay = time.perf_counter() + word_delay
         while time.perf_counter() < delay: pass
 
+def key_down(key_code):
+    # Let pyautogui handle non-hex values
+    if (isinstance(key_code, str)):
+        pyautogui.keyDown(key_code)
+        return
+
+    extra = ctypes.c_ulong(0)
+    ii_ = Input_I()
+    ii_.ki = KeyBdInput(0, key_code, 0x0008, 0, ctypes.pointer(extra))
+    x = Input(ctypes.c_ulong(1), ii_)
+    ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
+
+def key_up(key_code):
+    # Let pyautogui handle non-hex values
+    if (isinstance(key_code, str)):
+        pyautogui.keyUp(key_code)
+        return
+
+    extra = ctypes.c_ulong(0)
+    ii_ = Input_I()
+    ii_.ki = KeyBdInput(0, key_code, 0x0008 | 0x0002, 0, ctypes.pointer(extra))
+    x = Input(ctypes.c_ulong(1), ii_)
+    ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
+
 def key_press(key_name, duration=0.15):
-    duration_variance_limit = 0.050
+    duration_variance_limit = 0.015
     duration_variance = random.uniform(-duration_variance_limit, duration_variance_limit)
 
-    pyautogui.keyDown(key_name)
+    key_down(key_name)
     duration = duration + duration_variance
     delay = time.perf_counter() + duration
     while time.perf_counter() < delay: pass
-    pyautogui.keyUp(key_name)
+    key_up(key_name)

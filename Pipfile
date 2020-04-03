@@ -5,10 +5,12 @@ verify_ssl = true
 
 [dev-packages]
 rope = "*"
+pylint = "*"
 
 [packages]
 pyautogui = "*"
 scipy = "*"
+pyobjc-framework-quartz = "*"
 
 [requires]
 python_version = "3.7"

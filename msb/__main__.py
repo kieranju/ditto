@@ -2,7 +2,7 @@ import simulated
 
 # directx scan codes http://www.gamespp.com/directx/directInputKeyboardScanCodes.html
 
-simulated.mouse_to(500, 500)
+simulated.mouse_to(25, 25)
 # simulated.type_phrase('Hi!')
 
 # VK_CODE = {

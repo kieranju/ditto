@@ -1,20 +1,22 @@
 ## Getting started
 
-### Use Pipenv
+### Using Pipenv
 
 `pip install pipenv`
 
 `pipenv install`
 
-### Activate the Pipenv shell
+### Running commands
+
+#### Inside the Pipenv shell
 
 `pipenv shell`
 
-### Run commands in Pipenv shell
-
-`python --version`
-
 `python msb`
+
+#### Outside the Pipenv shell
+
+`pipenv run python msb`
 
 ## Notes
 

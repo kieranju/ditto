@@ -12,11 +12,11 @@
 
 `pipenv shell`
 
-`python msb`
+`python -m msb`
 
 #### Outside the Pipenv shell
 
-`pipenv run python msb`
+`pipenv run python -m msb`
 
 ## Notes
 

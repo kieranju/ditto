@@ -1,6 +1,8 @@
 from msb.definitions import pyautogui
 from msb.operator.definitions import KKey, MButton, OperatorInterface, Size, Point
 
+from enum import Enum
+
 from Quartz.CoreGraphics import CGEventCreateMouseEvent
 from Quartz.CoreGraphics import CGEventPost
 from Quartz.CoreGraphics import kCGEventMouseMoved
@@ -12,11 +14,19 @@ from Quartz.CoreGraphics import kCGMouseButtonLeft
 from Quartz.CoreGraphics import kCGMouseButtonRight
 from Quartz.CoreGraphics import kCGHIDEventTap
 
-M_BUTTONS = {
+class MEvent(Enum):
+    TYPE, PRESS, RELEASE = range(3)
+
+M_EVENTS = {
     MButton.LEFT: {
-        'press': kCGEventLeftMouseDown,
-        'release': kCGEventLeftMouseUp,
-        'event': kCGMouseButtonLeft,
+        MEvent.TYPE: kCGMouseButtonLeft,
+        MEvent.PRESS: kCGEventLeftMouseDown,
+        MEvent.RELEASE: kCGEventLeftMouseUp,
+    },
+    MButton.RIGHT: {
+        MEvent.TYPE: kCGMouseButtonRight,
+        MEvent.PRESS: kCGEventRightMouseDown,
+        MEvent.RELEASE: kCGEventRightMouseUp,
     },
 }
 
@@ -36,8 +46,10 @@ class Operator(OperatorInterface):
 
     def m_press(self, button: MButton):
         position = self.m_location_get()
-        m_event(M_BUTTONS[button]['press'], position.x, position.y, M_BUTTONS[button]['event'])
+        button_event = M_EVENTS[button]
+        m_event(button_event[MEvent.PRESS], position.x, position.y, button_event[MEvent.TYPE])
 
     def m_release(self, button: MButton):
         position = self.m_location_get()
-        m_event(M_BUTTONS[button]['release'], position.x, position.y, M_BUTTONS[button]['event'])
+        button_event = M_EVENTS[button]
+        m_event(button_event[MEvent.RELEASE], position.x, position.y, button_event[MEvent.TYPE])

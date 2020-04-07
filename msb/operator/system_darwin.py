@@ -53,3 +53,13 @@ class Operator(OperatorInterface):
         position = self.m_location_get()
         button_event = M_EVENTS[button]
         m_event(button_event[MEvent.RELEASE], position.x, position.y, button_event[MEvent.TYPE])
+
+    def k_press(self, key: KKey):
+        # TODO: Create mapping for KKey to KEYBOARD_KEYS
+        if key.name.lower() in pyautogui.KEYBOARD_KEYS:
+            pyautogui.keyDown(key.name.lower())
+
+    def k_release(self, key: KKey):
+        # TODO: Create mapping for KKey to KEYBOARD_KEYS
+        if key.name.lower() in pyautogui.KEYBOARD_KEYS:
+            pyautogui.keyUp(key.name.lower())

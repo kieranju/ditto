@@ -1,5 +1,5 @@
 from msb.definitions import operator
-from msb.operator.definitions import MButton
+from msb.operator.definitions import MButton, KKey
 
 from time import perf_counter
 from numpy import random, linspace
@@ -39,6 +39,12 @@ def m_press(button: MButton):
 
 def m_release(button: MButton):
     operator.m_release(button)
+
+def k_press(key: KKey):
+    operator.k_press(key)
+
+def k_release(key: KKey):
+    operator.k_release(key)
 
 # # TODO: add ability to make mistakes and delete them, then continue
 # def type_phrase(phrase, do_make_mistakes=True, words_per_minute=125):

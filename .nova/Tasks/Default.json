@@ -1,0 +1,9 @@
+{
+  "actions" : {
+    "run" : {
+      "enabled" : true,
+      "script" : "pipenv run python -m msb"
+    }
+  },
+  "identifier" : "BFADFF92-38B2-4527-B6FC-5283C330766F"
+}
